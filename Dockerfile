@@ -151,5 +151,5 @@ WORKDIR /mnt/hgfs/
 
 EXPOSE 9501
 
-CMD ["usr/local/bin/docker-entrypoint.sh"]
+CMD ["/usr/local/bin/docker-entrypoint.sh"]
 
