@@ -66,7 +66,7 @@ RUN pecl install https://pecl.php.net/get/swoole-4.2.13.tgz \
 	&& pecl install mongodb  1.5.3 \
 	&& pecl install igbinary 2.0.8 \
 	&& pecl install yaf 3.0.7 \
-	&& pecl install xdebug 2.6.0 \
+	&& pecl install xdebug 2.6.0 && docker-php-ext-enable xdebug \
 	&& pecl install inotify 2.0.0
 
 # Compile Phalcon
