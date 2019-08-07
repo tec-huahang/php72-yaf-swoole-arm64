@@ -139,7 +139,7 @@ RUN echo "extension=ldap.so" > /usr/local/etc/php/conf.d/ldap.ini \
 		&& echo "extension=imagick.so" > /usr/local/etc/php/conf.d/imagick.ini \
 		&& echo "extension=sockets.so" > /usr/local/etc/php/conf.d/sockets.ini \
 		&& echo "extension=sysvmsg.so" > /usr/local/etc/php/conf.d/sysvmsg.ini \
-		&& echo "extension=xdebug.so" > /usr/local/etc/php/conf.d/php.ini \
+		&& echo "zend_extension=xdebug.so" > /usr/local/etc/php/conf.d/xdebug.ini \
 		&& echo "extension=sysvshm.so" > /usr/local/etc/php/conf.d/sysvshm.ini
 
 ADD conf/yac.ini /usr/local/etc/php/conf.d/yac.ini
