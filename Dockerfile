@@ -68,6 +68,7 @@ RUN pecl install https://pecl.php.net/get/swoole-4.2.13.tgz \
 	&& pecl install igbinary 2.0.8 \
 	&& pecl install yaf 3.0.7 \
 	&& pecl install xdebug 2.7.2 \
+	&& pecl install apcu 1.0.4 \
 	&& pecl install inotify 2.0.0
 
 # Compile Phalcon
@@ -125,6 +126,7 @@ RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 RUN echo "extension=ldap.so" > /usr/local/etc/php/conf.d/ldap.ini \
 		&& echo "extension=swoole.so" > /usr/local/etc/php/conf.d/swoole.ini \
+		&& echo "extension=apcu.so" > /usr/local/etc/php/conf.d/apcu.ini \
 		&& echo "extension=gd.so" > /usr/local/etc/php/conf.d/gd.ini \
 		&& echo "extension=mysqli.so" > /usr/local/etc/php/conf.d/mysqli.ini \
 		&& echo "extension=bz2.so" > /usr/local/etc/php/conf.d/bz2.ini \
