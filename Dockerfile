@@ -87,7 +87,7 @@ RUN set -xe && \
 	tar xzf yac-${YAC_VERSION}.tar.gz && cd yac-yac-${YAC_VERSION} && \
 	phpize && ./configure --with-php-config=/usr/local/bin/php-config && make && make install
 
-ENV PHP_ZOOKEEPER_VERSION=0.2.2
+ENV PHP_ZOOKEEPER_VERSION=0.6.4
 RUN wget http://pecl.php.net/get/zookeeper-${PHP_ZOOKEEPER_VERSION}.tgz && \
    tar -zxvf zookeeper-${PHP_ZOOKEEPER_VERSION}.tgz && \
    cd zookeeper-${PHP_ZOOKEEPER_VERSION} && \ 
