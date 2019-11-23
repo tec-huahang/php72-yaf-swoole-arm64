@@ -28,7 +28,7 @@ RUN apk add --update git make gcc g++ imagemagick-dev \
 #RUN apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing gnu-libiconv
 ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 
-ENV ZOOKEEPER_VERSION=3.4.9
+ENV ZOOKEEPER_VERSION=3.4.6
 RUN wget https://archive.apache.org/dist/zookeeper/zookeeper-${ZOOKEEPER_VERSION}/zookeeper-${ZOOKEEPER_VERSION}.tar.gz && \
    tar -zxf zookeeper-${ZOOKEEPER_VERSION}.tar.gz && cd zookeeper-${ZOOKEEPER_VERSION}/src/c && \
    ./configure --prefix=/usr/local/zookeeper-${ZOOKEEPER_VERSION}/ && make && make install
@@ -71,7 +71,7 @@ RUN pecl install https://pecl.php.net/get/swoole-4.2.13.tgz \
 	&& pecl install mongodb  1.5.3 \
 	&& pecl install igbinary 2.0.8 \
 	&& pecl install yaf 3.0.7 \
-	&& pecl install xdebug && docker-php-ext-enable xdebug\
+	&& pecl install xdebug && docker-php-ext-enable xdebug \
 	&& pecl install apcu 1.0.4 \
 	&& pecl install inotify 2.0.0 
 
@@ -90,9 +90,8 @@ RUN set -xe && \
 ENV PHP_ZOOKEEPER_VERSION=0.2.2
 RUN wget http://pecl.php.net/get/zookeeper-${PHP_ZOOKEEPER_VERSION}.tgz && \
    tar -zxvf zookeeper-${PHP_ZOOKEEPER_VERSION}.tgz && \
-   cd zookeeper-${PHP_ZOOKEEPER_VERSION} && phpize && \
-   ./configure --with-php-config=/usr/local/bin/php-config --with-libzookeeper-dir=/usr/local/zookeeper-${ZOOKEEPER_VERSION}/ && \
-   make && make install
+   cd zookeeper-${PHP_ZOOKEEPER_VERSION} && \ 
+   phpize && ./configure --with-php-config=/usr/local/bin/php-config --with-libzookeeper-dir=/usr/local/zookeeper-${ZOOKEEPER_VERSION}/ && make && make install
     
 FROM php:7.2.6-fpm-alpine
 
