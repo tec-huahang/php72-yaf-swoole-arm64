@@ -28,6 +28,11 @@ RUN apk add --update git make gcc g++ imagemagick-dev \
 #RUN apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing gnu-libiconv
 ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 
+ENV ZOOKEEPER_VERSION=3.4.9
+RUN wget https://archive.apache.org/dist/zookeeper/zookeeper-${ZOOKEEPER_VERSION}/zookeeper-${ZOOKEEPER_VERSION}.tar.gz && \
+   tar -zxf zookeeper-${ZOOKEEPER_VERSION}.tar.gz && cd zookeeper-${ZOOKEEPER_VERSION}/src/c && \
+   ./configure --prefix=/usr/local/zookeeper-${ZOOKEEPER_VERSION}/ && make && make install
+
 
 RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
         && docker-php-ext-install gd \
@@ -53,7 +58,6 @@ RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-di
 		&& echo "extension=memcached.so" > /usr/local/etc/php/conf.d/memcached.ini \
 		&& echo "extension=redis.so" > /usr/local/etc/php/conf.d/phpredis.ini \
 		&& echo "extension=phalcon.so" > /usr/local/etc/php/conf.d/phalcon.ini \
-		&& echo "extension=xdebug.so" > /usr/local/etc/php/conf.d/xdebug.ini \
 		&& echo "extension=igbinary.so" > /usr/local/etc/php/conf.d/igbinary.ini
 
 
@@ -69,7 +73,8 @@ RUN pecl install https://pecl.php.net/get/swoole-4.2.13.tgz \
 	&& pecl install yaf 3.0.7 \
 	&& pecl install xdebug 2.7.2 \
 	&& pecl install apcu 1.0.4 \
-	&& pecl install inotify 2.0.0
+	&& pecl install inotify 2.0.0 \
+	&& pecl install zookeeper 0.6.4 && docker-php-ext-enable zookeeper
 
 # Compile Phalcon
 ENV PHALCON_VERSION=3.4.1
@@ -82,7 +87,6 @@ RUN set -xe && \
 	curl -LO https://github.com/laruence/yac/archive/yac-${YAC_VERSION}.tar.gz && \
 	tar xzf yac-${YAC_VERSION}.tar.gz && cd yac-yac-${YAC_VERSION} && \
 	phpize && ./configure --with-php-config=/usr/local/bin/php-config && make && make install
-
 
 
 FROM php:7.2.6-fpm-alpine
@@ -142,7 +146,8 @@ RUN echo "extension=ldap.so" > /usr/local/etc/php/conf.d/ldap.ini \
 		&& echo "extension=imagick.so" > /usr/local/etc/php/conf.d/imagick.ini \
 		&& echo "extension=sockets.so" > /usr/local/etc/php/conf.d/sockets.ini \
 		&& echo "extension=sysvmsg.so" > /usr/local/etc/php/conf.d/sysvmsg.ini \
-		&& echo "extension=sysvshm.so" > /usr/local/etc/php/conf.d/sysvshm.ini
+		&& echo "extension=sysvshm.so" > /usr/local/etc/php/conf.d/sysvshm.ini \
+		&& echo "extension=zookeeper.so" > /usr/local/etc/php/conf.d/zookeeper.ini 
 
 ADD conf/yac.ini /usr/local/etc/php/conf.d/yac.ini
 
