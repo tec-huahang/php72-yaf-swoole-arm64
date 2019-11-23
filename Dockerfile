@@ -73,7 +73,9 @@ RUN pecl install https://pecl.php.net/get/swoole-4.2.13.tgz \
 	&& pecl install yaf 3.0.7 \
 	&& pecl install xdebug && docker-php-ext-enable xdebug \
 	&& pecl install apcu 1.0.4 \
-	&& pecl install inotify 2.0.0 
+	&& pecl install inotify 2.0.0 \
+	&& pecl install grpc \
+	&& pecl install zookeeper
 
 # Compile Phalcon
 ENV PHALCON_VERSION=3.4.1
@@ -87,12 +89,6 @@ RUN set -xe && \
 	tar xzf yac-${YAC_VERSION}.tar.gz && cd yac-yac-${YAC_VERSION} && \
 	phpize && ./configure --with-php-config=/usr/local/bin/php-config && make && make install
 
-ENV PHP_ZOOKEEPER_VERSION=0.6.4
-RUN wget http://pecl.php.net/get/zookeeper-${PHP_ZOOKEEPER_VERSION}.tgz && \
-   tar -zxvf zookeeper-${PHP_ZOOKEEPER_VERSION}.tgz && \
-   cd zookeeper-${PHP_ZOOKEEPER_VERSION} && \ 
-   phpize && ./configure --with-php-config=/usr/local/bin/php-config --with-libzookeeper-dir=/usr/local/zookeeper-${ZOOKEEPER_VERSION}/ && make && make install
-    
 FROM php:7.2.6-fpm-alpine
 
 LABEL maintainer="zhanlong.liu@icloud.com"
@@ -151,6 +147,7 @@ RUN echo "extension=ldap.so" > /usr/local/etc/php/conf.d/ldap.ini \
 		&& echo "extension=sockets.so" > /usr/local/etc/php/conf.d/sockets.ini \
 		&& echo "extension=sysvmsg.so" > /usr/local/etc/php/conf.d/sysvmsg.ini \
 		&& echo "extension=sysvshm.so" > /usr/local/etc/php/conf.d/sysvshm.ini \
+		&& echo "extension=grpc.so" > /usr/local/etc/php/conf.d/grpc.ini \
 		&& echo "extension=zookeeper.so" > /usr/local/etc/php/conf.d/zookeeper.ini 
 
 ADD conf/yac.ini /usr/local/etc/php/conf.d/yac.ini
