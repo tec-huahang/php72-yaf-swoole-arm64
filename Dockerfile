@@ -73,8 +73,7 @@ RUN pecl install https://pecl.php.net/get/swoole-4.2.13.tgz \
 	&& pecl install yaf 3.0.7 \
 	&& pecl install xdebug 2.7.2 \
 	&& pecl install apcu 1.0.4 \
-	&& pecl install inotify 2.0.0 \
-	&& pecl install zookeeper 0.6.4 && docker-php-ext-enable zookeeper
+	&& pecl install inotify 2.0.0 
 
 # Compile Phalcon
 ENV PHALCON_VERSION=3.4.1
@@ -88,7 +87,13 @@ RUN set -xe && \
 	tar xzf yac-${YAC_VERSION}.tar.gz && cd yac-yac-${YAC_VERSION} && \
 	phpize && ./configure --with-php-config=/usr/local/bin/php-config && make && make install
 
-
+ENV PHP_ZOOKEEPER_VERSION=0.6.4
+RUN wget http://pecl.php.net/get/zookeeper-${PHP_ZOOKEEPER_VERSION}.tgz && \
+   tar -zxvf zookeeper-${PHP_ZOOKEEPER_VERSION}.tgz && \
+   cd zookeeper-${PHP_ZOOKEEPER_VERSION} && phpize && \
+   ./configure --with-php-config=/usr/local/bin/php-config --with-libzookeeper-dir=/usr/local/zookeeper-${ZOOKEEPER_VERSION}/ && \
+   make && make install
+    
 FROM php:7.2.6-fpm-alpine
 
 LABEL maintainer="zhanlong.liu@icloud.com"
