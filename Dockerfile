@@ -55,16 +55,6 @@ RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-di
 		&& echo "extension=igbinary.so" > /usr/local/etc/php/conf.d/igbinary.ini \
 		&& echo "extension=zookeeper.so" > /usr/local/etc/php/conf.d/zookeeper.ini
 
-ENV ZOOKEEPER_VERSION=3.4.9
-RUN wget https://archive.apache.org/dist/zookeeper/zookeeper-${ZOOKEEPER_VERSION}/zookeeper-${ZOOKEEPER_VERSION}.tar.gz && \
-   tar -zxf zookeeper-${ZOOKEEPER_VERSION}.tar.gz && cd zookeeper-${ZOOKEEPER_VERSION}/src/c && \
-   ./configure --prefix=/usr/local/zookeeper-${ZOOKEEPER_VERSION}/ && make && make install
-
-ENV PHP_ZOOKEEPER_VERSION=0.6.4
-RUN wget http://pecl.php.net/get/zookeeper-${PHP_ZOOKEEPER_VERSION}.tgz && \
-   tar -zxvf zookeeper-${PHP_ZOOKEEPER_VERSION}.tgz && cd zookeeper-${PHP_ZOOKEEPER_VERSION} && phpize && ./configure --with-php-config=/usr/local/bin/php-config --with-libzookeeper-dir=/usr/local/zookeeper-${ZOOKEEPER_VERSION}/ && make && make install && \
-    echo "extension=zookeeper.so" > /usr/local/etc/php/conf.d/zookeeper.ini
-
 WORKDIR /usr/src/php/ext/
 
 RUN pecl install https://pecl.php.net/get/swoole-4.2.13.tgz \
@@ -97,7 +87,11 @@ FROM php:7.2.6-fpm-alpine
 LABEL maintainer="zhanlong.liu@icloud.com"
 
 RUN apk add --update --no-cache \
-    git \
+    	git \
+	make \
+	gcc \
+	g++ \
+	autoconf \
 	libc-dev \
 	icu-dev \
 	libxml2-dev \
@@ -121,6 +115,16 @@ RUN apk add --update --no-cache \
 #RUN apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing gnu-libiconv
 ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 
+ENV ZOOKEEPER_VERSION=3.4.9
+RUN wget https://archive.apache.org/dist/zookeeper/zookeeper-${ZOOKEEPER_VERSION}/zookeeper-${ZOOKEEPER_VERSION}.tar.gz && \
+   tar -zxf zookeeper-${ZOOKEEPER_VERSION}.tar.gz && cd zookeeper-${ZOOKEEPER_VERSION}/src/c && \
+   ./configure --prefix=/usr/local/zookeeper-${ZOOKEEPER_VERSION}/ && make && make install
+
+ENV PHP_ZOOKEEPER_VERSION=0.6.4
+RUN wget http://pecl.php.net/get/zookeeper-${PHP_ZOOKEEPER_VERSION}.tgz && \
+   tar -zxvf zookeeper-${PHP_ZOOKEEPER_VERSION}.tgz && cd zookeeper-${PHP_ZOOKEEPER_VERSION} && phpize && ./configure --with-php-config=/usr/local/bin/php-config --with-libzookeeper-dir=/usr/local/zookeeper-${ZOOKEEPER_VERSION}/ && make && make install && \
+   echo "extension=zookeeper.so" > /usr/local/etc/php/conf.d/zookeeper.ini
+   
 COPY --from=0 /usr/local/lib/php/extensions/no-debug-non-zts-20170718/* /usr/local/lib/php/extensions/no-debug-non-zts-20170718/
 COPY docker-entrypoint.sh /usr/local/bin/
 ADD conf/php.ini /usr/local/etc/php/php.ini
