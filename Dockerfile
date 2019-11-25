@@ -55,6 +55,15 @@ RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-di
 		&& echo "extension=igbinary.so" > /usr/local/etc/php/conf.d/igbinary.ini \
 		&& echo "extension=zookeeper.so" > /usr/local/etc/php/conf.d/zookeeper.ini
 
+ENV ZOOKEEPER_VERSION=3.4.9
+RUN wget https://archive.apache.org/dist/zookeeper/zookeeper-${ZOOKEEPER_VERSION}/zookeeper-${ZOOKEEPER_VERSION}.tar.gz && \
+   tar -zxf zookeeper-${ZOOKEEPER_VERSION}.tar.gz && cd zookeeper-${ZOOKEEPER_VERSION}/src/c && \
+   ./configure --prefix=/usr/local/zookeeper-${ZOOKEEPER_VERSION}/ && make && make install
+
+ENV PHP_ZOOKEEPER_VERSION=0.6.4
+RUN wget http://pecl.php.net/get/zookeeper-${PHP_ZOOKEEPER_VERSION}.tgz && \
+   tar -zxvf zookeeper-${PHP_ZOOKEEPER_VERSION}.tgz && cd zookeeper-${PHP_ZOOKEEPER_VERSION} && phpize && ./configure --with-php-config=/usr/local/bin/php-config --with-libzookeeper-dir=/usr/local/zookeeper-${ZOOKEEPER_VERSION}/ && make && make install && \
+    echo "extension=zookeeper.so" > /usr/local/etc/php/conf.d/zookeeper.ini
 
 WORKDIR /usr/src/php/ext/
 
@@ -82,17 +91,6 @@ RUN set -xe && \
 	curl -LO https://github.com/laruence/yac/archive/yac-${YAC_VERSION}.tar.gz && \
 	tar xzf yac-${YAC_VERSION}.tar.gz && cd yac-yac-${YAC_VERSION} && \
 	phpize && ./configure --with-php-config=/usr/local/bin/php-config && make && make install
-
-ENV ZOOKEEPER_VERSION=3.4.9
-RUN wget https://archive.apache.org/dist/zookeeper/zookeeper-${ZOOKEEPER_VERSION}/zookeeper-${ZOOKEEPER_VERSION}.tar.gz && \
-   tar -zxf zookeeper-${ZOOKEEPER_VERSION}.tar.gz && cd zookeeper-${ZOOKEEPER_VERSION}/src/c && \
-   ./configure --prefix=/usr/local/zookeeper-${ZOOKEEPER_VERSION}/ && make && make install
-
-ENV PHP_ZOOKEEPER_VERSION=0.6.4
-RUN wget http://pecl.php.net/get/zookeeper-${PHP_ZOOKEEPER_VERSION}.tgz && \
-   tar -zxvf zookeeper-${PHP_ZOOKEEPER_VERSION}.tgz && cd zookeeper-${PHP_ZOOKEEPER_VERSION} && phpize && ./configure --with-php-config=/usr/local/bin/php-config --with-libzookeeper-dir=/usr/local/zookeeper-${ZOOKEEPER_VERSION}/ && make && make install && \
-    echo "extension=zookeeper.so" > /usr/local/etc/php/conf.d/zookeeper.ini
-
 
 FROM php:7.2.6-fpm-alpine
 
