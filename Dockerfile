@@ -152,6 +152,7 @@ RUN echo "extension=ldap.so" > /usr/local/etc/php/conf.d/ldap.ini \
 		&& echo "extension=sockets.so" > /usr/local/etc/php/conf.d/sockets.ini \
 		&& echo "extension=sysvmsg.so" > /usr/local/etc/php/conf.d/sysvmsg.ini \
 		&& echo "extension=sysvshm.so" > /usr/local/etc/php/conf.d/sysvshm.ini \
+		&& echo "extension=zookeeper.so" > /usr/local/etc/php/conf.d/zookeeper.ini \
 		&& echo "extension=grpc.so" > /usr/local/etc/php/conf.d/grpc.ini 
 ADD conf/yac.ini /usr/local/etc/php/conf.d/yac.ini
 
