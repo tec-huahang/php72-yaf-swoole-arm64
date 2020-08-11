@@ -28,6 +28,7 @@ RUN apk add --update git make gcc g++ imagemagick-dev \
 #RUN apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing gnu-libiconv
 ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 
+
 RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
         && docker-php-ext-install gd \
         && docker-php-ext-install mysqli \
@@ -52,8 +53,8 @@ RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-di
 		&& echo "extension=memcached.so" > /usr/local/etc/php/conf.d/memcached.ini \
 		&& echo "extension=redis.so" > /usr/local/etc/php/conf.d/phpredis.ini \
 		&& echo "extension=phalcon.so" > /usr/local/etc/php/conf.d/phalcon.ini \
-		&& echo "extension=igbinary.so" > /usr/local/etc/php/conf.d/igbinary.ini \
-		&& echo "extension=zookeeper.so" > /usr/local/etc/php/conf.d/zookeeper.ini
+		&& echo "extension=igbinary.so" > /usr/local/etc/php/conf.d/igbinary.ini
+
 
 WORKDIR /usr/src/php/ext/
 
@@ -65,10 +66,7 @@ RUN pecl install https://pecl.php.net/get/swoole-4.4.8.tgz \
 	&& pecl install mongodb  1.5.3 \
 	&& pecl install igbinary 2.0.8 \
 	&& pecl install yaf 3.0.7 \
-	&& pecl install xdebug && docker-php-ext-enable xdebug \
-	&& pecl install apcu 1.0.4 \
-	&& pecl install inotify 2.0.0 \
-	&& pecl install grpc
+	&& pecl install inotify 2.0.0
 
 # Compile Phalcon
 ENV PHALCON_VERSION=3.4.1
@@ -82,16 +80,14 @@ RUN set -xe && \
 	tar xzf yac-${YAC_VERSION}.tar.gz && cd yac-yac-${YAC_VERSION} && \
 	phpize && ./configure --with-php-config=/usr/local/bin/php-config && make && make install
 
+
+
 FROM php:7.2.6-fpm-alpine
 
 LABEL maintainer="zhanlong.liu@icloud.com"
 
 RUN apk add --update --no-cache \
-    	git \
-	make \
-	gcc \
-	g++ \
-	autoconf \
+    git \
 	libc-dev \
 	icu-dev \
 	libxml2-dev \
@@ -111,32 +107,20 @@ RUN apk add --update --no-cache \
 	nodejs \
 	nodejs-npm \
 	&& rm -rf /var/cache/apk/*
-	
+
 #RUN apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing gnu-libiconv
 ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 
-ENV ZOOKEEPER_VERSION=3.4.9
-RUN wget https://archive.apache.org/dist/zookeeper/zookeeper-${ZOOKEEPER_VERSION}/zookeeper-${ZOOKEEPER_VERSION}.tar.gz && \
-   tar -zxf zookeeper-${ZOOKEEPER_VERSION}.tar.gz && cd zookeeper-${ZOOKEEPER_VERSION}/src/c && \
-   ./configure --prefix=/usr/local/zookeeper-${ZOOKEEPER_VERSION}/ && make && make install
-
-ENV PHP_ZOOKEEPER_VERSION=0.6.4
-RUN wget http://pecl.php.net/get/zookeeper-${PHP_ZOOKEEPER_VERSION}.tgz && \
-   tar -zxvf zookeeper-${PHP_ZOOKEEPER_VERSION}.tgz && cd zookeeper-${PHP_ZOOKEEPER_VERSION} && phpize && ./configure --with-php-config=/usr/local/bin/php-config --with-libzookeeper-dir=/usr/local/zookeeper-${ZOOKEEPER_VERSION}/ && make && make install && \
-   echo "extension=zookeeper.so" > /usr/local/etc/php/conf.d/zookeeper.ini
-   
 COPY --from=0 /usr/local/lib/php/extensions/no-debug-non-zts-20170718/* /usr/local/lib/php/extensions/no-debug-non-zts-20170718/
 COPY docker-entrypoint.sh /usr/local/bin/
 ADD conf/php.ini /usr/local/etc/php/php.ini
 ADD conf/www.conf /usr/local/etc/php-fpm.d/www.conf
 ADD conf/yaf.ini /usr/local/etc/php/conf.d/yaf.ini
 
-
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 RUN echo "extension=ldap.so" > /usr/local/etc/php/conf.d/ldap.ini \
 		&& echo "extension=swoole.so" > /usr/local/etc/php/conf.d/swoole.ini \
-		&& echo "extension=apcu.so" > /usr/local/etc/php/conf.d/apcu.ini \
 		&& echo "extension=gd.so" > /usr/local/etc/php/conf.d/gd.ini \
 		&& echo "extension=mysqli.so" > /usr/local/etc/php/conf.d/mysqli.ini \
 		&& echo "extension=bz2.so" > /usr/local/etc/php/conf.d/bz2.ini \
@@ -152,9 +136,8 @@ RUN echo "extension=ldap.so" > /usr/local/etc/php/conf.d/ldap.ini \
 		&& echo "extension=imagick.so" > /usr/local/etc/php/conf.d/imagick.ini \
 		&& echo "extension=sockets.so" > /usr/local/etc/php/conf.d/sockets.ini \
 		&& echo "extension=sysvmsg.so" > /usr/local/etc/php/conf.d/sysvmsg.ini \
-		&& echo "extension=sysvshm.so" > /usr/local/etc/php/conf.d/sysvshm.ini \
-		&& echo "extension=zookeeper.so" > /usr/local/etc/php/conf.d/zookeeper.ini \
-		&& echo "extension=grpc.so" > /usr/local/etc/php/conf.d/grpc.ini 
+		&& echo "extension=sysvshm.so" > /usr/local/etc/php/conf.d/sysvshm.ini
+
 ADD conf/yac.ini /usr/local/etc/php/conf.d/yac.ini
 
 RUN cd /tmp \
@@ -168,5 +151,4 @@ WORKDIR /mnt/hgfs/
 
 EXPOSE 9501
 
-CMD ["/usr/local/bin/docker-entrypoint.sh"]
-
+CMD ["usr/local/bin/docker-entrypoint.sh"]
