@@ -66,6 +66,7 @@ RUN pecl install https://pecl.php.net/get/swoole-4.5.0.tgz \
 	&& pecl install mongodb  1.5.3 \
 	&& pecl install igbinary 2.0.8 \
 	&& pecl install yaf 3.0.7 \
+	&& pecl install oci8 2.2.0 \
 	&& pecl install inotify 2.0.0
 
 # Compile Phalcon
