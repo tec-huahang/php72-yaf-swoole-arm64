@@ -58,6 +58,27 @@ RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-di
 
 WORKDIR /usr/src/php/ext/
 
+# Install Oracle Instantclient
+RUN mkdir /opt/oracle \
+    && cd /opt/oracle \
+    && wget http://image.nuomiphp.com/instantclient-basic-linux.x64-12.1.0.2.0.zip \
+    && wget http://image.nuomiphp.com/instantclient-sdk-linux.x64-12.1.0.2.0.zip \
+    && unzip /opt/oracle/instantclient-basic-linux.x64-12.1.0.2.0.zip -d /opt/oracle \
+    && unzip /opt/oracle/instantclient-sdk-linux.x64-12.1.0.2.0.zip -d /opt/oracle \
+    && ln -s /opt/oracle/instantclient_12_1/libclntsh.so.12.1 /opt/oracle/instantclient_12_1/libclntsh.so \
+    && ln -s /opt/oracle/instantclient_12_1/libclntshcore.so.12.1 /opt/oracle/instantclient_12_1/libclntshcore.so \
+    && ln -s /opt/oracle/instantclient_12_1/libocci.so.12.1 /opt/oracle/instantclient_12_1/libocci.so \
+    && rm -rf /opt/oracle/*.zip
+    
+
+# Install Oracle extensions
+RUN docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/opt/oracle/instantclient_12_1,12.1 \
+       && echo 'instantclient,/opt/oracle/instantclient_12_1/' | pecl install oci8 \
+       && docker-php-ext-install \
+               pdo_oci \
+       && docker-php-ext-enable \
+               oci8
+
 RUN pecl install https://pecl.php.net/get/swoole-4.5.0.tgz \
 	&& pecl install amqp 1.9.4 \
 	&& pecl install imagick 3.4.3 \
@@ -66,7 +87,6 @@ RUN pecl install https://pecl.php.net/get/swoole-4.5.0.tgz \
 	&& pecl install mongodb  1.5.3 \
 	&& pecl install igbinary 2.0.8 \
 	&& pecl install yaf 3.0.7 \
-	&& pecl install oci8 2.2.0 \
 	&& pecl install inotify 2.0.0
 
 # Compile Phalcon
