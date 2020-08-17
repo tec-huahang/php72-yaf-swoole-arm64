@@ -60,6 +60,10 @@ RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-di
 
 
 WORKDIR /usr/src/php/ext/
+
+
+ENV LD_LIBRARY_PATH="/usr/local/instantclient_12_1"
+
 # Install Oracle Instantclient
 RUN mkdir /var/opt/oracle \
     && cd /var/opt/oracle \
