@@ -26,39 +26,7 @@ RUN apk add --update git make gcc g++ imagemagick-dev \
 	&& rm -rf /var/cache/apk/*
 
 #RUN apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing gnu-libiconv
-ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
-
-# Install Oracle Instantclient
-ENV LD_LIBRARY_PATH /usr/lib/instantclient
-# ENV ORACLE_BASE /var/opt/oracle/instantclient
-# ENV TNS_ADMIN /var/opt/oracle/instantclient
-# ENV ORACLE_HOME /var/opt/oracle/instantclient
-
-# Install Oracle Instantclient
-RUN mkdir /var/opt/oracle \
-    && cd /var/opt/oracle \
-    && wget http://image.nuomiphp.com/instantclient-basic-linux.x64-12.1.0.2.0.zip \
-    && wget http://image.nuomiphp.com/instantclient-sdk-linux.x64-12.1.0.2.0.zip \
-    && unzip /var/opt/oracle/instantclient-basic-linux.x64-12.1.0.2.0.zip -d /var/opt/oracle \
-    && unzip /var/opt/oracle/instantclient-sdk-linux.x64-12.1.0.2.0.zip -d /var/opt/oracle \
-    && mv instantclient*/ /usr/lib/instantclient_12_1 && \
-    ln -s /usr/lib/instantclient_12_1/libclntsh.so.12.1 /usr/lib/libclntsh.so && \
-    ln -s /usr/lib/instantclient_12_1/libocci.so.12.1 /usr/lib/libocci.so && \
-    ln -s /usr/lib/instantclient_12_1/libociicus.so /usr/lib/libociicus.so && \
-    ln -s /usr/lib/instantclient_12_1/libnnz12.so /usr/lib/libnnz12.so && \
-    ln -s /usr/lib/libnsl.so.2 /usr/lib/libnsl.so.1 && \
-    ln -s /lib/libc.so.6 /usr/lib/libresolv.so.2 && \
-    ln -s /lib64/ld-linux-x86-64.so.2 /usr/lib/ld-linux-x86-64.so.2 \
-    && rm -rf /var/opt/oracle/*.zip
-
-# Install Oracle extensions
-RUN docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/usr/lib/instantclient_12_1,12.1 \
-       && echo 'instantclient,/usr/lib/instantclient_12_1/' | pecl install oci8 \
-       && docker-php-ext-install \
-               pdo_oci \
-       && docker-php-ext-enable \
-               oci8
-    
+ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php 
 
 RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
         && docker-php-ext-install gd \
@@ -142,6 +110,33 @@ RUN apk add --update --no-cache \
 
 #RUN apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing gnu-libiconv
 ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
+
+# Install Oracle Instantclient
+ENV LD_LIBRARY_PATH /var/opt/oracle/instantclient/
+ENV ORACLE_BASE /var/opt/oracle/instantclient
+ENV TNS_ADMIN /var/opt/oracle/instantclient
+ENV ORACLE_HOME /var/opt/oracle/instantclient
+
+# Install Oracle Instantclient
+RUN mkdir /var/opt/oracle \
+    && cd /var/opt/oracle \
+    && wget http://image.nuomiphp.com/instantclient-basic-linux.x64-12.1.0.2.0.zip \
+    && wget http://image.nuomiphp.com/instantclient-sdk-linux.x64-12.1.0.2.0.zip \
+    && unzip /var/opt/oracle/instantclient-basic-linux.x64-12.1.0.2.0.zip -d /var/opt/oracle \
+    && unzip /var/opt/oracle/instantclient-sdk-linux.x64-12.1.0.2.0.zip -d /var/opt/oracle \
+    && ln -s /var/opt/oracle/instantclient_12_1 /var/opt/oracle/instantclient_12_1 \
+    && ln -s /var/opt/oracle/instantclient_12_1/libclntsh.so.12.1 /var/opt/oracle/instantclient_12_1/libclntsh.so \
+    && ln -s /var/opt/oracle/instantclient_12_1/libclntshcore.so.12.1 /var/opt/oracle/instantclient_12_1/libclntshcore.so \
+    && ln -s /var/opt/oracle/instantclient_12_1/libocci.so.12.1 /var/opt/oracle/instantclient_12_1/libocci.so \
+    && rm -rf /var/opt/oracle/*.zip
+    
+# Install Oracle extensions
+RUN docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/var/opt/oracle/instantclient_12_1,12.1 \
+       && echo 'instantclient,/var/opt/oracle/instantclient_12_1/' | pecl install oci8 \
+       && docker-php-ext-install \
+               pdo_oci \
+       && docker-php-ext-enable \
+               oci8
 
 COPY --from=0 /usr/local/lib/php/extensions/no-debug-non-zts-20170718/* /usr/local/lib/php/extensions/no-debug-non-zts-20170718/
 COPY docker-entrypoint.sh /usr/local/bin/
