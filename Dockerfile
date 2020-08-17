@@ -41,7 +41,7 @@ RUN unzip /tmp/instantclient-basiclite-linux.x64-19.3.0.0.0dbru.zip -d /usr/loca
   
   # Install Oracle extensions
 RUN docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/usr/local/instantclient_19_3,19.3 \
-       && echo 'instantclient,/var/opt/oracle/instantclient_19_3' | pecl install oci8 \
+       && echo 'instantclient,/usr/local/instantclient_19_3' | pecl install oci8 \
        && docker-php-ext-install \
                pdo_oci \
        && docker-php-ext-enable \
