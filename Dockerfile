@@ -37,9 +37,15 @@ ENV LD_LIBRARY_PATH /usr/local/instantclient/
 RUN unzip /tmp/instantclient-basiclite-linux.x64-19.3.0.0.0dbru.zip -d /usr/local/ && \
   unzip /tmp/instantclient-sdk-linux.x64-19.3.0.0.0dbru.zip -d /usr/local/ && \
   rm /tmp/instantclient-basiclite-linux.x64-19.3.0.0.0dbru.zip /tmp/instantclient-sdk-linux.x64-19.3.0.0.0dbru.zip &&\
-  ln -s /usr/local/instantclient_19_3 /usr/local/instantclient && \
-  echo 'instantclient,/usr/local/instantclient' | pecl install oci8 && \
-  echo "extension=oci8.so" >> /usr/local/etc/php/php.ini
+  ln -s /usr/local/instantclient_19_3 /usr/local/instantclient
+  
+  # Install Oracle extensions
+RUN docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/usr/local/instantclient_19_3,19.3 \
+       && echo 'instantclient,/var/opt/oracle/instantclient_19_3' | pecl install oci8 \
+       && docker-php-ext-install \
+               pdo_oci \
+       && docker-php-ext-enable \
+               oci8
     
 
 RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
