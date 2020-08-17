@@ -36,8 +36,7 @@ RUN apt-get update && \
   unzip \
   libaio-dev
 
-RUN 
-  cd /tmp/ && \
+RUN cd /tmp/ && \
   wget http://image.nuomiphp.com/instantclient-basiclite-linux.x64-19.3.0.0.0.zip && \
   wget http://image.nuomiphp.com/instantclient-sdk-linux.x64-19.3.0.0.0.zip && \
   unzip /tmp/instantclient-basiclite-linux.x64-19.3.0.0.0.zip -d /usr/local/ && \
