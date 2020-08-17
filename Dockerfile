@@ -28,17 +28,7 @@ RUN apk add --update git make gcc g++ imagemagick-dev \
 #RUN apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing gnu-libiconv
 ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 
-# Install Oracle Instantclient
-RUN mkdir /var/opt/oracle \
-    && cd /var/opt/oracle \
-    && wget http://image.nuomiphp.com/instantclient-basic-linux.x64-12.1.0.2.0.zip \
-    && wget http://image.nuomiphp.com/instantclient-sdk-linux.x64-12.1.0.2.0.zip \
-    && unzip /var/opt/oracle/instantclient-basic-linux.x64-12.1.0.2.0.zip -d /var/opt/oracle \
-    && unzip /var/opt/oracle/instantclient-sdk-linux.x64-12.1.0.2.0.zip -d /var/opt/oracle \
-    && ln -s /var/opt/oracle/instantclient_12_1/libclntsh.so.12.1 /var/opt/oracle/instantclient_12_1/libclntsh.so \
-    && ln -s /var/opt/oracle/instantclient_12_1/libclntshcore.so.12.1 /var/opt/oracle/instantclient_12_1/libclntshcore.so \
-    && ln -s /var/opt/oracle/instantclient_12_1/libocci.so.12.1 /var/opt/oracle/instantclient_12_1/libocci.so \
-    && rm -rf /var/opt/oracle/*.zip
+
     
 
 RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
@@ -70,6 +60,17 @@ RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-di
 
 
 WORKDIR /usr/src/php/ext/
+# Install Oracle Instantclient
+RUN mkdir /var/opt/oracle \
+    && cd /var/opt/oracle \
+    && wget http://image.nuomiphp.com/instantclient-basic-linux.x64-12.1.0.2.0.zip \
+    && wget http://image.nuomiphp.com/instantclient-sdk-linux.x64-12.1.0.2.0.zip \
+    && unzip /var/opt/oracle/instantclient-basic-linux.x64-12.1.0.2.0.zip -d /var/opt/oracle \
+    && unzip /var/opt/oracle/instantclient-sdk-linux.x64-12.1.0.2.0.zip -d /var/opt/oracle \
+    && ln -s /var/opt/oracle/instantclient_12_1/libclntsh.so.12.1 /var/opt/oracle/instantclient_12_1/libclntsh.so \
+    && ln -s /var/opt/oracle/instantclient_12_1/libclntshcore.so.12.1 /var/opt/oracle/instantclient_12_1/libclntshcore.so \
+    && ln -s /var/opt/oracle/instantclient_12_1/libocci.so.12.1 /var/opt/oracle/instantclient_12_1/libocci.so \
+    && rm -rf /var/opt/oracle/*.zip
 
 # Install Oracle extensions
 RUN docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/var/opt/oracle/instantclient_12_1,12.1 \
