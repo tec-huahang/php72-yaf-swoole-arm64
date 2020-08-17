@@ -32,16 +32,26 @@ ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 # install oracle client
 COPY /lib/ /tmp/
 # Install Oracle Instantclient
-ENV LD_LIBRARY_PATH /usr/local/instantclient/
+ENV LD_LIBRARY_PATH /var/opt/oracle/instantclient/
 
-RUN unzip /tmp/instantclient-basiclite-linux.x64-19.3.0.0.0dbru.zip -d /usr/local/ && \
-  unzip /tmp/instantclient-sdk-linux.x64-19.3.0.0.0dbru.zip -d /usr/local/ && \
-  rm /tmp/instantclient-basiclite-linux.x64-19.3.0.0.0dbru.zip /tmp/instantclient-sdk-linux.x64-19.3.0.0.0dbru.zip &&\
-  ln -s /usr/local/instantclient_19_3 /usr/local/instantclient
-  
-  # Install Oracle extensions
-RUN docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/usr/local/instantclient_19_3,19.3 \
-       && echo 'instantclient,/usr/local/instantclient_19_3' | pecl install oci8 \
+
+# Install Oracle Instantclient
+RUN mkdir /var/opt/oracle \
+    && cd /var/opt/oracle \
+    && wget http://image.nuomiphp.com/instantclient-basic-linux.x64-12.1.0.2.0.zip \
+    && wget http://image.nuomiphp.com/instantclient-sdk-linux.x64-12.1.0.2.0.zip \
+    && unzip /var/opt/oracle/instantclient-basic-linux.x64-12.1.0.2.0.zip -d /var/opt/oracle \
+    && unzip /var/opt/oracle/instantclient-sdk-linux.x64-12.1.0.2.0.zip -d /var/opt/oracle \
+    
+    && ln -s /usr/local/instantclient_12_1 /usr/local/instantclient
+    && ln -s /var/opt/oracle/instantclient_12_1/libclntsh.so.12.1 /var/opt/oracle/instantclient_12_1/libclntsh.so \
+    && ln -s /var/opt/oracle/instantclient_12_1/libclntshcore.so.12.1 /var/opt/oracle/instantclient_12_1/libclntshcore.so \
+    && ln -s /var/opt/oracle/instantclient_12_1/libocci.so.12.1 /var/opt/oracle/instantclient_12_1/libocci.so \
+    && rm -rf /var/opt/oracle/*.zip
+    
+# Install Oracle extensions
+RUN docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/var/opt/oracle/instantclient_12_1,12.1 \
+       && echo 'instantclient,/var/opt/oracle/instantclient_12_1/' | pecl install oci8 \
        && docker-php-ext-install \
                pdo_oci \
        && docker-php-ext-enable \
