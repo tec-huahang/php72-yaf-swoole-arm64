@@ -42,18 +42,18 @@ RUN mkdir /var/opt/oracle \
     && unzip /var/opt/oracle/instantclient-basic-linux.x64-12.1.0.2.0.zip -d /var/opt/oracle \
     && unzip /var/opt/oracle/instantclient-sdk-linux.x64-12.1.0.2.0.zip -d /var/opt/oracle \
     && mv instantclient*/ /usr/lib/instantclient && \
-    ln -s /usr/lib/instantclient/libclntsh.so.19.1 /usr/lib/libclntsh.so && \
-    ln -s /usr/lib/instantclient/libocci.so.19.1 /usr/lib/libocci.so && \
+    ln -s /usr/lib/instantclient/libclntsh.so.12.1 /usr/lib/libclntsh.so && \
+    ln -s /usr/lib/instantclient/libocci.so.12.1 /usr/lib/libocci.so && \
     ln -s /usr/lib/instantclient/libociicus.so /usr/lib/libociicus.so && \
-    ln -s /usr/lib/instantclient/libnnz19.so /usr/lib/libnnz19.so && \
+    ln -s /usr/lib/instantclient/libnnz12.so /usr/lib/libnnz12.so && \
     ln -s /usr/lib/libnsl.so.2 /usr/lib/libnsl.so.1 && \
     ln -s /lib/libc.so.6 /usr/lib/libresolv.so.2 && \
     ln -s /lib64/ld-linux-x86-64.so.2 /usr/lib/ld-linux-x86-64.so.2 \
     && rm -rf /var/opt/oracle/*.zip
 
 # Install Oracle extensions
-RUN docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/usr/lib/instantclient,19.1 \
-       && echo 'instantclient,/usr/lib/instantclient_19_1/' | pecl install oci8 \
+RUN docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/usr/lib/instantclient,12.1 \
+       && echo 'instantclient,/usr/lib/instantclient/' | pecl install oci8 \
        && docker-php-ext-install \
                pdo_oci \
        && docker-php-ext-enable \
