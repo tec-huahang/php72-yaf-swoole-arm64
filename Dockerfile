@@ -30,7 +30,9 @@ ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 
 # Install Oracle Instantclient
 ENV LD_LIBRARY_PATH /var/opt/oracle/instantclient/
-
+ENV ORACLE_BASE /var/opt/oracle/instantclient
+ENV TNS_ADMIN /var/opt/oracle/instantclient
+ENV ORACLE_HOME /var/opt/oracle/instantclient
 
 # Install Oracle Instantclient
 RUN mkdir /var/opt/oracle \
