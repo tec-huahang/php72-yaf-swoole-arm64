@@ -31,11 +31,6 @@ ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 # Install Oracle Instantclient
 ENV LD_LIBRARY_PATH /usr/local/instantclient/
 
-RUN apt-get update && \
-  apt-get install -y \
-  unzip \
-  libaio-dev
-
 RUN cd /tmp/ && \
   wget http://image.nuomiphp.com/instantclient-basiclite-linux.x64-19.3.0.0.0.zip && \
   wget http://image.nuomiphp.com/instantclient-sdk-linux.x64-19.3.0.0.0.zip && \
