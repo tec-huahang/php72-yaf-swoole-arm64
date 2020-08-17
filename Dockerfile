@@ -32,12 +32,13 @@ ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 # install oracle client
 COPY /lib/ /tmp/
 # Install Oracle Instantclient
-ENV LD_LIBRARY_PATH /usr/local/instantclient_19_3/
+ENV LD_LIBRARY_PATH /usr/local/instantclient/
 
 RUN unzip /tmp/instantclient-basiclite-linux.x64-19.3.0.0.0dbru.zip -d /usr/local/ && \
   unzip /tmp/instantclient-sdk-linux.x64-19.3.0.0.0dbru.zip -d /usr/local/ && \
   rm /tmp/instantclient-basiclite-linux.x64-19.3.0.0.0dbru.zip /tmp/instantclient-sdk-linux.x64-19.3.0.0.0dbru.zip &&\
-  ln -s /usr/local/instantclient_19_3 /usr/local/instantclient
+  ln -s /usr/local/instantclient_19_3 /usr/local/instantclient && \
+  echo 'instantclient,/usr/local/instantclient' | pecl install oci8 
   
   # Install Oracle extensions
 RUN docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/usr/local/instantclient_19_3,19.3 \
