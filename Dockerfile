@@ -42,8 +42,7 @@ RUN mkdir /var/opt/oracle \
     && wget http://image.nuomiphp.com/instantclient-sdk-linux.x64-12.1.0.2.0.zip \
     && unzip /var/opt/oracle/instantclient-basic-linux.x64-12.1.0.2.0.zip -d /var/opt/oracle \
     && unzip /var/opt/oracle/instantclient-sdk-linux.x64-12.1.0.2.0.zip -d /var/opt/oracle \
-    
-    && ln -s /usr/local/instantclient_12_1 /usr/local/instantclient
+    && ln -s /usr/local/instantclient_12_1 /usr/local/instantclient \
     && ln -s /var/opt/oracle/instantclient_12_1/libclntsh.so.12.1 /var/opt/oracle/instantclient_12_1/libclntsh.so \
     && ln -s /var/opt/oracle/instantclient_12_1/libclntshcore.so.12.1 /var/opt/oracle/instantclient_12_1/libclntshcore.so \
     && ln -s /var/opt/oracle/instantclient_12_1/libocci.so.12.1 /var/opt/oracle/instantclient_12_1/libocci.so \
