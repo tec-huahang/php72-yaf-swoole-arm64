@@ -27,7 +27,7 @@ RUN apk add --update git make gcc g++ imagemagick-dev \
 
 #RUN apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing gnu-libiconv
 ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
-ENV LD_LIBRARY_PATH /var/opt/oracle/instantclient_12_1
+ENV LD_LIBRARY_PATH /var/opt/oracle/instantclient_12_1/
 
 
 # Install Oracle Instantclient
