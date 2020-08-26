@@ -110,30 +110,17 @@ RUN apk add --update --no-cache \
 
 #RUN apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing gnu-libiconv
 ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
-# Install Oracle Instantclient
-ENV LD_LIBRARY_PATH=/var/opt/oracle/instantclient_12_1/
-ENV ORACLE_BASE=/var/opt/oracle/instantclient_12_1
-ENV TNS_ADMIN=/var/opt/oracle/instantclient_12_1
-ENV ORACLE_HOME=/var/opt/oracle/instantclient_12_1
-# Install Oracle Instantclient
-RUN mkdir /var/opt/oracle \
-    && cd /var/opt/oracle \
-    && wget http://image.nuomiphp.com/instantclient-basic-linux.x64-12.1.0.2.0.zip \
-    && wget http://image.nuomiphp.com/instantclient-sdk-linux.x64-12.1.0.2.0.zip \
-    && unzip /var/opt/oracle/instantclient-basic-linux.x64-12.1.0.2.0.zip -d /var/opt/oracle \
-    && unzip /var/opt/oracle/instantclient-sdk-linux.x64-12.1.0.2.0.zip -d /var/opt/oracle \
-    && ln -s /var/opt/oracle/instantclient_12_1/libclntsh.so.12.1 /var/opt/oracle/instantclient_12_1/libclntsh.so \
-    && ln -s /var/opt/oracle/instantclient_12_1/libclntshcore.so.12.1 /var/opt/oracle/instantclient_12_1/libclntshcore.so \
-    && ln -s /var/opt/oracle/instantclient_12_1/libocci.so.12.1 /var/opt/oracle/instantclient_12_1/libocci.so \
-    && rm -rf /var/opt/oracle/*.zip
-    
-    # Install Oracle extensions
-RUN docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/var/opt/oracle/instantclient_12_1,12.1 \
-       && echo 'instantclient,/var/opt/oracle/instantclient_12_1/' | pecl install oci8 \
-       && docker-php-ext-install \
-               pdo_oci \
-       && docker-php-ext-enable \
-               oci8
+RUN mkdir /opt/oracle \
+    && curl 'https://download.oracle.com/otn_software/linux/instantclient/19600/instantclient-basic-linux.x64-19.6.0.0.0dbru.zip' --output /opt/oracle/instantclient-basic-linux.zip \
+    && curl 'https://download.oracle.com/otn_software/linux/instantclient/19600/instantclient-sdk-linux.x64-19.6.0.0.0dbru.zip' --output /opt/oracle/instantclient-sdk-linux.zip \
+    && unzip '/opt/oracle/instantclient-basic-linux.zip' -d /opt/oracle \
+    && unzip '/opt/oracle/instantclient-sdk-linux.zip' -d /opt/oracle \
+    && rm /opt/oracle/instantclient-*.zip \
+    && mv /opt/oracle/instantclient_* /opt/oracle/instantclient \
+    && docker-php-ext-configure oci8 --with-oci8=instantclient,/opt/oracle/instantclient \
+    && docker-php-ext-install oci8 \
+    && echo /opt/oracle/instantclient/ > /etc/ld.so.conf.d/oracle-insantclient.conf \
+    && ldconfig
 
 COPY --from=0 /usr/local/lib/php/extensions/no-debug-non-zts-20170718/* /usr/local/lib/php/extensions/no-debug-non-zts-20170718/
 COPY docker-entrypoint.sh /usr/local/bin/
