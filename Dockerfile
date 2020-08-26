@@ -111,7 +111,10 @@ RUN apk add --update --no-cache \
 #RUN apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing gnu-libiconv
 ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
     
-ENV LD_LIBRARY_PATH /var/opt/oracle/instantclient php
+ENV LD_LIBRARY_PATH = /var/opt/oracle/instantclient
+ENV TNS_ADMIN = /etc/oracle
+ENV ORACLE_BASE = /var/opt/oracle/instantclient
+ENV ORACLE_HOME = /var/opt/oracle/instantclient
 # Install Oracle Instantclient
 RUN mkdir /var/opt/oracle \
     && cd /var/opt/oracle \
