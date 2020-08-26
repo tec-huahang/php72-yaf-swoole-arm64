@@ -110,16 +110,16 @@ RUN apk add --update --no-cache \
 
 #RUN apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing gnu-libiconv
 ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
-RUN mkdir /opt/oracle \
-    && curl 'https://download.oracle.com/otn_software/linux/instantclient/19600/instantclient-basic-linux.x64-19.6.0.0.0dbru.zip' --output /opt/oracle/instantclient-basic-linux.zip \
-    && curl 'https://download.oracle.com/otn_software/linux/instantclient/19600/instantclient-sdk-linux.x64-19.6.0.0.0dbru.zip' --output /opt/oracle/instantclient-sdk-linux.zip \
-    && unzip '/opt/oracle/instantclient-basic-linux.zip' -d /opt/oracle \
-    && unzip '/opt/oracle/instantclient-sdk-linux.zip' -d /opt/oracle \
-    && rm /opt/oracle/instantclient-*.zip \
-    && mv /opt/oracle/instantclient_* /opt/oracle/instantclient \
-    && docker-php-ext-configure oci8 --with-oci8=instantclient,/opt/oracle/instantclient \
+RUN mkdir /var/opt/oracle \
+    && curl 'https://download.oracle.com/otn_software/linux/instantclient/19600/instantclient-basic-linux.x64-19.6.0.0.0dbru.zip' --output /var/opt/oracle/instantclient-basic-linux.zip \
+    && curl 'https://download.oracle.com/otn_software/linux/instantclient/19600/instantclient-sdk-linux.x64-19.6.0.0.0dbru.zip' --output /var/opt/oracle/instantclient-sdk-linux.zip \
+    && unzip '/var/opt/oracle/instantclient-basic-linux.zip' -d /var/opt/oracle \
+    && unzip '/var/opt/oracle/instantclient-sdk-linux.zip' -d /var/opt/oracle \
+    && rm /var/opt/oracle/instantclient-*.zip \
+    && mv /var/opt/oracle/instantclient_* /var/opt/oracle/instantclient \
+    && docker-php-ext-configure oci8 --with-oci8=instantclient,/var/opt/oracle/instantclient \
     && docker-php-ext-install oci8 \
-    && echo /opt/oracle/instantclient/ > /etc/ld.so.conf.d/oracle-insantclient.conf \
+    && echo /var/opt/oracle/instantclient/ > /etc/ld.so.conf.d/oracle-insantclient.conf \
     && ldconfig
 
 COPY --from=0 /usr/local/lib/php/extensions/no-debug-non-zts-20170718/* /usr/local/lib/php/extensions/no-debug-non-zts-20170718/
