@@ -110,7 +110,11 @@ RUN apk add --update --no-cache \
 #RUN apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing gnu-libiconv
 ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 
-ENV LD_LIBRARY_PATH  /var/opt/oracle/instantclient_12_1:${LD_LIBRARY_PATH}
+ENV LD_LIBRARY_PATH="/var/opt/oracle/instantclient_12_1"
+ENV OCI_HOME="/var/opt/oracle/instantclient_12_1"
+ENV OCI_LIB_DIR="/var/opt/oracle/instantclient_12_1"
+ENV OCI_INCLUDE_DIR="/var/opt/oracle/instantclient_12_1/sdk/include"
+ENV OCI_VERSION=12
 
 # Install Oracle Instantclient
 RUN mkdir /var/opt/oracle \
@@ -125,12 +129,14 @@ RUN mkdir /var/opt/oracle \
     && rm -rf /var/opt/oracle/*.zip
 
     # Install Oracle extensions
-RUN docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/var/opt/oracle/instantclient_12_1,12.1 \
-       && echo 'instantclient,/var/opt/oracle/instantclient_12_1/' | pecl install oci8 \
-       && docker-php-ext-install \
-               pdo_oci \
-       && docker-php-ext-enable \
-               oci8
+RUN echo 'instantclient,/var/opt/oracle/instantclient_12_1/' | pecl install oci8 \
+    && docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/opt/oracle/instantclient_12_1,12.1 \
+    && docker-php-ext-configure pdo_dblib --with-libdir=/lib \
+    && docker-php-ext-install \
+            pdo_oci \
+    && docker-php-ext-enable \
+            oci8 \
+            pdo_oci
 
 COPY --from=0 /usr/local/lib/php/extensions/no-debug-non-zts-20170718/* /usr/local/lib/php/extensions/no-debug-non-zts-20170718/
 COPY docker-entrypoint.sh /usr/local/bin/
