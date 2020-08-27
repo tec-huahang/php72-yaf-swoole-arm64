@@ -130,12 +130,13 @@ RUN mkdir /var/opt/oracle \
 
     # Install Oracle extensions
 RUN echo 'instantclient,/var/opt/oracle/instantclient_12_1/' | pecl install oci8 \
-    && docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/opt/oracle/instantclient_12_1,12.1 \
+    && docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/var/opt/oracle/instantclient_12_1,12.1 \
     && docker-php-ext-install \
             pdo_oci \
     && docker-php-ext-enable \
             oci8 \
             pdo_oci
+
 
 COPY --from=0 /usr/local/lib/php/extensions/no-debug-non-zts-20170718/* /usr/local/lib/php/extensions/no-debug-non-zts-20170718/
 COPY docker-entrypoint.sh /usr/local/bin/
