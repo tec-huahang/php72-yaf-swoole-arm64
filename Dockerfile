@@ -70,12 +70,12 @@ RUN curl 'https://raw.githubusercontent.com/caffeinalab/php-fpm-oci8/master/orac
  rm -rf /var/lib/apk/* && \
  php -v
 
-RUN curl -LO http://php.net/distributions/php-7.1.6.tar.gz && \
+RUN curl -LO http://php.net/distributions/php-7.2.6.tar.gz && \
     mkdir php_oci && \
-    mv php-7.1.6.tar.gz ./php_oci
+    mv php-7.2.6.tar.gz ./php_oci
 WORKDIR php_oci
-RUN tar xfvz php-7.1.6.tar.gz
-WORKDIR php-7.1.6/ext/pdo_oci
+RUN tar xfvz php-7.2.6.tar.gz
+WORKDIR php-7.2.6/ext/pdo_oci
 RUN phpize && \
     ./configure --with-pdo-oci=instantclient,/usr/local/instantclient,12.1 && \
     make && \
