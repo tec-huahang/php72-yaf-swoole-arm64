@@ -58,7 +58,7 @@ RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-di
 RUN curl 'https://raw.githubusercontent.com/caffeinalab/php-fpm-oci8/master/oracle/instantclient-basic-linux.x64-12.2.0.1.0.zip' --output /var/opt/instantclient-basic-linux.zip && \
  curl 'https://raw.githubusercontent.com/caffeinalab/php-fpm-oci8/master/oracle/instantclient-sdk-linux.x64-12.2.0.1.0.zip'  --output /var/opt/instantclient-sdk-linux.zip && \
  curl 'https://raw.githubusercontent.com/caffeinalab/php-fpm-oci8/master/oracle/instantclient-sqlplus-linux.x64-12.2.0.1.0.zip'  --output /var/opt/instantclient-sqlplus-linux.zip && \
- unzip /var/opt/nstantclient-basic-linux.zip -d /usr/local  && \
+ unzip /var/opt/instantclient-basic-linux.zip -d /usr/local  && \
  unzip /var/opt/instantclient-sdk-linux.zip -d /usr/local  && \
  unzip /var/opt/instantclient-sqlplus-linux.zip -d /usr/local  && \
  ln -s /usr/local/instantclient_12_2 /usr/local/instantclient && \
