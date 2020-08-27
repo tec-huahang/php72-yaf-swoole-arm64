@@ -101,7 +101,6 @@ RUN apk add --update --no-cache \
 	libmemcached-dev \
 	cyrus-sasl-dev \
 	rabbitmq-c \
-	libaio1 \
     rabbitmq-c-dev \
 	imagemagick-dev \
 	nodejs \
@@ -116,6 +115,14 @@ ENV OCI_HOME /var/opt/oracle/instantclient_12_1
 ENV OCI_LIB_DIR /var/opt/oracle/instantclient_12_1
 ENV OCI_INCLUDE_DIR /var/opt/oracle/instantclient_12_1/sdk/include
 ENV OCI_VERSION=12
+ENV PACKAGES="\
+  dumb-init \
+  bash vim tini \
+  ca-certificates \
+  python3==3.6.5-r0 \
+  openblas \
+  libaio libnsl \
+"
 
 # Install Oracle Instantclient
 RUN mkdir /var/opt/oracle \
@@ -127,6 +134,7 @@ RUN mkdir /var/opt/oracle \
     && ln -s /var/opt/oracle/instantclient_12_1/libclntsh.so.12.1 /var/opt/oracle/instantclient_12_1/libclntsh.so \
     && ln -s /var/opt/oracle/instantclient_12_1/libclntshcore.so.12.1 /var/opt/oracle/instantclient_12_1/libclntshcore.so \
     && ln -s /var/opt/oracle/instantclient_12_1/libocci.so.12.1 /var/opt/oracle/instantclient_12_1/libocci.so \
+    && ln -s /usr/lib/libnsl.so.2.0.0  /usr/lib/libnsl.so.1 \
     && rm -rf /var/opt/oracle/*.zip
 
     # Install Oracle extensions
