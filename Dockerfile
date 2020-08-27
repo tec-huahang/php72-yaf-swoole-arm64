@@ -54,34 +54,6 @@ RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-di
 		&& echo "extension=phalcon.so" > /usr/local/etc/php/conf.d/phalcon.ini \
 		&& echo "extension=igbinary.so" > /usr/local/etc/php/conf.d/igbinary.ini
 
-    
-RUN curl 'https://raw.githubusercontent.com/caffeinalab/php-fpm-oci8/master/oracle/instantclient-basic-linux.x64-12.2.0.1.0.zip' --output /var/opt/instantclient-basic-linux.zip && \
- curl 'https://raw.githubusercontent.com/caffeinalab/php-fpm-oci8/master/oracle/instantclient-sdk-linux.x64-12.2.0.1.0.zip'  --output /var/opt/instantclient-sdk-linux.zip && \
- curl 'https://raw.githubusercontent.com/caffeinalab/php-fpm-oci8/master/oracle/instantclient-sqlplus-linux.x64-12.2.0.1.0.zip'  --output /var/opt/instantclient-sqlplus-linux.zip && \
- unzip /var/opt/instantclient-basic-linux.zip -d /usr/local  && \
- unzip /var/opt/instantclient-sdk-linux.zip -d /usr/local  && \
- unzip /var/opt/instantclient-sqlplus-linux.zip -d /usr/local  && \
- ln -s /usr/local/instantclient_12_2 /usr/local/instantclient && \
- ln -s /usr/local/instantclient/libclntsh.so.* /usr/local/instantclient/libclntsh.so && \
- ln -s /usr/local/instantclient/lib* /usr/lib && \
- ln -s /usr/local/instantclient/sqlplus /usr/bin/sqlplus && \
- docker-php-ext-configure oci8 --with-oci8=instantclient,/usr/local/instantclient && \
- docker-php-ext-install oci8 && \
- rm -rf /var/lib/apk/* && \
- php -v
-
-RUN curl -LO http://php.net/distributions/php-7.2.6.tar.gz && \
-    mkdir php_oci && \
-    mv php-7.2.6.tar.gz ./php_oci
-WORKDIR php_oci
-RUN tar xfvz php-7.2.6.tar.gz
-WORKDIR php-7.2.6/ext/pdo_oci
-RUN phpize && \
-    ./configure --with-pdo-oci=instantclient,/usr/local/instantclient,12.1 && \
-    make && \
-    make install && \
-    echo extension=pdo_oci.so > /usr/local/etc/php/conf.d/pdo_oci.ini && \
-    php -v
 
 WORKDIR /usr/src/php/ext/
 
@@ -138,6 +110,37 @@ RUN apk add --update --no-cache \
 #RUN apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing gnu-libiconv
 ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 
+ENV LD_LIBRARY_PATH  /usr/local/instantclient
+
+  
+RUN curl 'https://raw.githubusercontent.com/caffeinalab/php-fpm-oci8/master/oracle/instantclient-basic-linux.x64-12.2.0.1.0.zip' --output /var/opt/instantclient-basic-linux.zip && \
+ curl 'https://raw.githubusercontent.com/caffeinalab/php-fpm-oci8/master/oracle/instantclient-sdk-linux.x64-12.2.0.1.0.zip'  --output /var/opt/instantclient-sdk-linux.zip && \
+ curl 'https://raw.githubusercontent.com/caffeinalab/php-fpm-oci8/master/oracle/instantclient-sqlplus-linux.x64-12.2.0.1.0.zip'  --output /var/opt/instantclient-sqlplus-linux.zip && \
+ unzip /var/opt/instantclient-basic-linux.zip -d /usr/local  && \
+ unzip /var/opt/instantclient-sdk-linux.zip -d /usr/local  && \
+ unzip /var/opt/instantclient-sqlplus-linux.zip -d /usr/local  && \
+ ln -s /usr/local/instantclient_12_2 /usr/local/instantclient && \
+ ln -s /usr/local/instantclient/libclntsh.so.* /usr/local/instantclient/libclntsh.so && \
+ ln -s /usr/local/instantclient/lib* /usr/lib && \
+ ln -s /usr/local/instantclient/sqlplus /usr/bin/sqlplus && \
+ docker-php-ext-configure oci8 --with-oci8=instantclient,/usr/local/instantclient && \
+ docker-php-ext-install oci8 && \
+ rm -rf /var/lib/apk/* && \
+ php -v
+
+RUN curl -LO http://php.net/distributions/php-7.2.6.tar.gz && \
+    mkdir php_oci && \
+    mv php-7.2.6.tar.gz ./php_oci
+WORKDIR php_oci
+RUN tar xfvz php-7.2.6.tar.gz
+WORKDIR php-7.2.6/ext/pdo_oci
+RUN phpize && \
+    ./configure --with-pdo-oci=instantclient,/usr/local/instantclient,12.1 && \
+    make && \
+    make install && \
+    echo extension=pdo_oci.so > /usr/local/etc/php/conf.d/pdo_oci.ini && \
+    php -v
+
 COPY --from=0 /usr/local/lib/php/extensions/no-debug-non-zts-20170718/* /usr/local/lib/php/extensions/no-debug-non-zts-20170718/
 COPY docker-entrypoint.sh /usr/local/bin/
 ADD conf/php.ini /usr/local/etc/php/php.ini
@@ -163,8 +166,6 @@ RUN echo "extension=ldap.so" > /usr/local/etc/php/conf.d/ldap.ini \
 		&& echo "extension=imagick.so" > /usr/local/etc/php/conf.d/imagick.ini \
 		&& echo "extension=sockets.so" > /usr/local/etc/php/conf.d/sockets.ini \
 		&& echo "extension=sysvmsg.so" > /usr/local/etc/php/conf.d/sysvmsg.ini \
-		&& echo "extension=pdo_oci.so" > /usr/local/etc/php/conf.d/pdo_oci.ini \
-		&& echo "extension=oci8.so" > /usr/local/etc/php/conf.d/oci8.ini \
 		&& echo "extension=sysvshm.so" > /usr/local/etc/php/conf.d/sysvshm.ini
 
 ADD conf/yac.ini /usr/local/etc/php/conf.d/yac.ini
