@@ -55,9 +55,9 @@ RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-di
 		&& echo "extension=igbinary.so" > /usr/local/etc/php/conf.d/igbinary.ini
 
     
-RUN curl -LO https://raw.githubusercontent.com/caffeinalab/php-fpm-oci8/master/oracle/instantclient-basic-linux.x64-12.2.0.1.0.zip --output /opt/oracle/instantclient-basic-linux.zip && \
- curl -LO https://raw.githubusercontent.com/caffeinalab/php-fpm-oci8/master/oracle/instantclient-sdk-linux.x64-12.2.0.1.0.zip  --output /opt/oracle/instantclient-sdk-linux.zip && \
- curl -LO https://raw.githubusercontent.com/caffeinalab/php-fpm-oci8/master/oracle/instantclient-sqlplus-linux.x64-12.2.0.1.0.zip  --output /opt/oracle/instantclient-sqlplus-linux.zip && \
+RUN curl 'https://raw.githubusercontent.com/caffeinalab/php-fpm-oci8/master/oracle/instantclient-basic-linux.x64-12.2.0.1.0.zip' --output /opt/oracle/instantclient-basic-linux.zip && \
+ curl 'https://raw.githubusercontent.com/caffeinalab/php-fpm-oci8/master/oracle/instantclient-sdk-linux.x64-12.2.0.1.0.zip'  --output /opt/oracle/instantclient-sdk-linux.zip && \
+ curl 'https://raw.githubusercontent.com/caffeinalab/php-fpm-oci8/master/oracle/instantclient-sqlplus-linux.x64-12.2.0.1.0.zip'  --output /opt/oracle/instantclient-sqlplus-linux.zip && \
  unzip /opt/oracle/nstantclient-basic-linux.zip -d /usr/local  && \
  unzip /opt/oracle/instantclient-sdk-linux.zip -d /usr/local  && \
  unzip /opt/oracle/instantclient-sqlplus-linux.zip -d /opt/oracle  && \
