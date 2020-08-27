@@ -135,8 +135,6 @@ RUN docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/var/opt/oracl
                pdo_oci \
  	&& docker-php-ext-enable \
                oci8
-	&& echo "extension=pdo_oci.so" > /usr/local/etc/php/conf.d/pdo_oci.ini \
-	&& echo "extension=oci8.so" > /usr/local/etc/php/conf.d/oci8.ini \
 
 
 COPY --from=0 /usr/local/lib/php/extensions/no-debug-non-zts-20170718/* /usr/local/lib/php/extensions/no-debug-non-zts-20170718/
@@ -164,6 +162,8 @@ RUN echo "extension=ldap.so" > /usr/local/etc/php/conf.d/ldap.ini \
 		&& echo "extension=imagick.so" > /usr/local/etc/php/conf.d/imagick.ini \
 		&& echo "extension=sockets.so" > /usr/local/etc/php/conf.d/sockets.ini \
 		&& echo "extension=sysvmsg.so" > /usr/local/etc/php/conf.d/sysvmsg.ini \
+		&& echo "extension=pdo_oci.so" > /usr/local/etc/php/conf.d/pdo_oci.ini \
+		&& echo "extension=oci8.so" > /usr/local/etc/php/conf.d/oci8.ini \
 		&& echo "extension=sysvshm.so" > /usr/local/etc/php/conf.d/sysvshm.ini
 
 ADD conf/yac.ini /usr/local/etc/php/conf.d/yac.ini
