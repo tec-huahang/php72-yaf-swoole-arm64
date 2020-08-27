@@ -23,6 +23,8 @@ RUN apk add --update git make gcc g++ imagemagick-dev \
         rabbitmq-c-dev \
 	binutils \
 	imagemagick-dev \
+	libaio \
+	libnsl \
 	&& rm -rf /var/cache/apk/*
 
 #RUN apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing gnu-libiconv
