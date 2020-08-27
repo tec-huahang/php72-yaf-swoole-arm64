@@ -101,17 +101,13 @@ RUN apk add --update --no-cache \
 	libmemcached-dev \
 	cyrus-sasl-dev \
 	rabbitmq-c \
+	libaio1 \
     rabbitmq-c-dev \
 	imagemagick-dev \
 	nodejs \
 	nodejs-npm \
 	&& rm -rf /var/cache/apk/*
 	
-RUN apt-get update && apt-get install -qqy git unzip libfreetype6-dev \
-        libjpeg62-turbo-dev \
-        libpng-dev \
-        libaio1 wget && apt-get clean autoclean && apt-get autoremove --yes &&  rm -rf /var/lib/{apt,dpkg,cache,log}/ 
-
 #RUN apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing gnu-libiconv
 ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 
