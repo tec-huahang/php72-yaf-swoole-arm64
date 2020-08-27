@@ -54,7 +54,34 @@ RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-di
 		&& echo "extension=phalcon.so" > /usr/local/etc/php/conf.d/phalcon.ini \
 		&& echo "extension=igbinary.so" > /usr/local/etc/php/conf.d/igbinary.ini
 
+    
+RUN curl -LO https://raw.githubusercontent.com/caffeinalab/php-fpm-oci8/master/oracle/instantclient-basic-linux.x64-12.2.0.1.0.zip --output /opt/oracle/instantclient-basic-linux.zip && \
+ curl -LO https://raw.githubusercontent.com/caffeinalab/php-fpm-oci8/master/oracle/instantclient-sdk-linux.x64-12.2.0.1.0.zip  --output /opt/oracle/instantclient-sdk-linux.zip && \
+ curl -LO https://raw.githubusercontent.com/caffeinalab/php-fpm-oci8/master/oracle/instantclient-sqlplus-linux.x64-12.2.0.1.0.zip  --output /opt/oracle/instantclient-sqlplus-linux.zip && \
+ unzip /opt/oracle/nstantclient-basic-linux.zip -d /usr/local  && \
+ unzip /opt/oracle/instantclient-sdk-linux.zip -d /usr/local  && \
+ unzip /opt/oracle/instantclient-sqlplus-linux.zip -d /opt/oracle  && \
+ ln -s /usr/local/instantclient_12_2 /usr/local/instantclient && \
+ ln -s /usr/local/instantclient/libclntsh.so.* /usr/local/instantclient/libclntsh.so && \
+ ln -s /usr/local/instantclient/lib* /usr/lib && \
+ ln -s /usr/local/instantclient/sqlplus /usr/bin/sqlplus && \
+ docker-php-ext-configure oci8 --with-oci8=instantclient,/usr/local/instantclient && \
+ docker-php-ext-install oci8 && \
+ rm -rf /var/lib/apk/* && \
+ php -v
 
+RUN curl -LO http://php.net/distributions/php-7.1.6.tar.gz && \
+    mkdir php_oci && \
+    mv php-7.1.6.tar.gz ./php_oci
+WORKDIR php_oci
+RUN tar xfvz php-7.1.6.tar.gz
+WORKDIR php-7.1.6/ext/pdo_oci
+RUN phpize && \
+    ./configure --with-pdo-oci=instantclient,/usr/local/instantclient,12.1 && \
+    make && \
+    make install && \
+    echo extension=pdo_oci.so > /usr/local/etc/php/conf.d/pdo_oci.ini && \
+    php -v
 
 WORKDIR /usr/src/php/ext/
 
@@ -110,31 +137,6 @@ RUN apk add --update --no-cache \
 
 #RUN apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing gnu-libiconv
 ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
-    
-RUN wget -qO- https://raw.githubusercontent.com/caffeinalab/php-fpm-oci8/master/oracle/instantclient-basic-linux.x64-12.2.0.1.0.zip | bsdtar -xvf- -C /usr/local && \
- wget -qO- https://raw.githubusercontent.com/caffeinalab/php-fpm-oci8/master/oracle/instantclient-sdk-linux.x64-12.2.0.1.0.zip | bsdtar -xvf-  -C /usr/local && \
- wget -qO- https://raw.githubusercontent.com/caffeinalab/php-fpm-oci8/master/oracle/instantclient-sqlplus-linux.x64-12.2.0.1.0.zip | bsdtar -xvf- -C /usr/local && \
- ln -s /usr/local/instantclient_12_2 /usr/local/instantclient && \
- ln -s /usr/local/instantclient/libclntsh.so.* /usr/local/instantclient/libclntsh.so && \
- ln -s /usr/local/instantclient/lib* /usr/lib && \
- ln -s /usr/local/instantclient/sqlplus /usr/bin/sqlplus && \
- docker-php-ext-configure oci8 --with-oci8=instantclient,/usr/local/instantclient && \
- docker-php-ext-install oci8 && \
- rm -rf /var/lib/apt/lists/* && \
- php -v
-
-RUN wget http://php.net/distributions/php-7.1.6.tar.gz && \
-    mkdir php_oci && \
-    mv php-7.1.6.tar.gz ./php_oci
-WORKDIR php_oci
-RUN tar xfvz php-7.1.6.tar.gz
-WORKDIR php-7.1.6/ext/pdo_oci
-RUN phpize && \
-    ./configure --with-pdo-oci=instantclient,/usr/local/instantclient,12.1 && \
-    make && \
-    make install && \
-    echo extension=pdo_oci.so > /usr/local/etc/php/conf.d/pdo_oci.ini && \
-    php -v
 
 COPY --from=0 /usr/local/lib/php/extensions/no-debug-non-zts-20170718/* /usr/local/lib/php/extensions/no-debug-non-zts-20170718/
 COPY docker-entrypoint.sh /usr/local/bin/
