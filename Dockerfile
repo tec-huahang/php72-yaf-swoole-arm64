@@ -132,7 +132,7 @@ RUN mkdir /var/opt/oracle \
     && ln -s /var/opt/oracle/instantclient_12_1/libclntshcore.so.12.1 /var/opt/oracle/instantclient_12_1/libclntshcore.so \
     && ln -s /var/opt/oracle/instantclient_12_1/libocci.so.12.1 /var/opt/oracle/instantclient_12_1/libocci.so \
     && ln -s /usr/lib/libnsl.so.2.0.0  /usr/lib/libnsl.so.1 \
-    && ln -s /lib/libc.musl-x86_64.so.1 /lib64/ld-linux-x86-64.so.2 \
+    && ln -s /lib/libc.musl-x86_64.so.1 /lib/ld-linux-x86-64.so.2 \
     && rm -rf /var/opt/oracle/*.zip
 
     # Install Oracle extensions
