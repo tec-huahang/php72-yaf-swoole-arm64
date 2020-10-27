@@ -26,4 +26,6 @@ if [ ! -z $YAF_USE_SPL_AUTOLOAD ]; then
 	sed -i "s#^yaf\.use_spl_autoload=.*#yaf\.use_spl_autoload=${YAF_USE_SPL_AUTOLOAD}#g" /usr/local/etc/php/conf.d/yaf.ini
 fi
 
+mkdir /data/logs
+
 php-fpm
