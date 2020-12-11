@@ -179,7 +179,7 @@ RUN cd /tmp \
     && mv composer.phar /usr/local/bin/composer
 
 RUN npm install -g nodemon
-RUN sudo mkdir -p /data/logs && chomd -R 0755 /data/logs
+RUN mkdir -p /data/logs && chomd -R 0755 /data/logs
 
 WORKDIR /mnt/hgfs/
 
