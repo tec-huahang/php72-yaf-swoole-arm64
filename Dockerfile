@@ -1,4 +1,4 @@
-FROM php:7.2.6-fpm-alpine
+FROM nginx-php:7.2-arm
 
 COPY conf/php.ini /usr/local/etc/php/php.ini
 COPY conf/www.conf /usr/local/etc/php/www.conf
@@ -83,7 +83,7 @@ RUN set -xe && \
 
 
 
-FROM php:7.2.6-fpm-alpine
+FROM nginx-php:7.2-arm
 
 LABEL maintainer="zhanlong.liu@icloud.com"
 
